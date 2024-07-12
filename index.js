@@ -167,6 +167,12 @@ async function run() {
 
    
     app.get('/tag', async(req, res) =>{
+      const filter = req.query;
+      console.log(filter)
+      const query= {
+        tags : {$regex: filter.search, $options: 'i'}
+
+      }
         const cursor = tagCollection.find();
         const result = await cursor.toArray();
         res.send(result);
