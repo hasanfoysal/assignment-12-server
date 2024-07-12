@@ -173,7 +173,7 @@ async function run() {
         tags : {$regex: filter.search, $options: 'i'}
 
       }
-        const cursor = tagCollection.find();
+        const cursor = tagCollection.find(query);
         const result = await cursor.toArray();
         res.send(result);
     })
