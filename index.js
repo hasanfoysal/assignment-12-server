@@ -36,6 +36,8 @@ async function run() {
     const productsCollection = client.db('productsHunt').collection('services')
     const tagCollection = client.db('productsHunt').collection('tag')
     const trendingCollection = client.db('productsHunt').collection('trending')
+    const menuCollection = client.db('productsHunt').collection('menu')
+    const addCollection = client.db('productsHunt').collection('addProduct')
 
 
  
@@ -159,11 +161,70 @@ async function run() {
         res.send(result);
     })
 
-      app.post('/trending', async (req,res)=>{
+     app.post('/addProduct', verifyToken, verifyAdmin, async(req, res) =>{
+      const add = req.body;
+      const result = await addCollection.insertOne(add)
+      res.send(result);
+     })
+
+     app.get('/addProduct', async (req, res) =>{
+      const result = await addCollection.find().toArray();
+      res.send(result);
+     })
+
+     app.patch('/addProduct/:id', async(req, res) =>{
       const item = req.body;
-      const result = await trendingCollection.insertOne (item);
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) }
+      const updateDoc = {
+        $set: {
+          ProductName : item.title,
+          ProductImage : res.data.item.image_url,
+          ProductDescription: item.description,
+
+        }
+      }
+      const result = await addCollection.updateOne(filter, updateDoc);
+      res.send(result)
+     })
+
+     app.delete('/addProduct/:id',verifyToken, verifyAdmin, async (req, res) => {
+      const id = req.params.id;
+      const query = { _id:new ObjectId(id) }
+      const result = await menuCollection.deleteOne(query);
       res.send(result);
     })
+
+
+
+
+
+      app.get('/addProduct', verifyToken, verifyAdmin, async (req, res) => {
+        const item = req.body;
+        const result = await menuCollection.insertOne(item);
+        res.send(result);
+      });
+
+      app.get('/addProduct/:id', async (req, res) => {
+        const id = req.params.id;
+        const query = { _id: new ObjectId(id) }
+        const result = await addCollection.findOne(query);
+        res.send(result);
+      })
+
+    //   app.post('/menu',verifyToken, verifyAdmin, async (req,res)=>{
+    //   const item = req.body;
+    //   const result = await menuCollectionCollection.insertOne (item);
+    //   res.send(result);
+    // });
+
+    // app.delete('/menu/:id',verifyToken, verifyAdmin, async (req, res) => {
+    //   const id = req.params.id;
+    //   const query = { _id:new ObjectId(id) }
+    //   const result = await menuCollection.deleteOne(query);
+    //   res.send(result);
+    // })
+
 
    
     app.get('/tag', async(req, res) =>{
