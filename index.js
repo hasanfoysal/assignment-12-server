@@ -36,8 +36,9 @@ async function run() {
     const productsCollection = client.db('productsHunt').collection('services')
     const tagCollection = client.db('productsHunt').collection('tag')
     const trendingCollection = client.db('productsHunt').collection('trending')
-    const menuCollection = client.db('productsHunt').collection('menu')
+    // const menuCollection = client.db('productsHunt').collection('menu')
     const addCollection = client.db('productsHunt').collection('addProduct')
+    const myCollection = client.db('productsHunt').collection('myProduct')
 
 
  
@@ -160,6 +161,7 @@ async function run() {
         const result = await cursor.toArray();
         res.send(result);
     })
+    
 
      app.post('/addProduct', verifyToken, verifyAdmin, async(req, res) =>{
       const add = req.body;
@@ -172,26 +174,31 @@ async function run() {
       res.send(result);
      })
 
+
+
+
+
      app.patch('/addProduct/:id', async(req, res) =>{
       const item = req.body;
       const id = req.params.id;
       const filter = { _id: new ObjectId(id) }
-      const updateDoc = {
+      const updatedDoc = {
         $set: {
-          ProductName : item.title,
-          ProductImage : res.data.item.image_url,
-          ProductDescription: item.description,
+          ProductName : item.ProductName,
+          
+          ProductDescription: item.
+          ProductDescription, 
 
         }
-      }
-      const result = await addCollection.updateOne(filter, updateDoc);
+      }  
+      const result = await addCollection.updateOne(filter, updatedDoc);
       res.send(result)
      })
 
      app.delete('/addProduct/:id',verifyToken, verifyAdmin, async (req, res) => {
       const id = req.params.id;
       const query = { _id:new ObjectId(id) }
-      const result = await menuCollection.deleteOne(query);
+      const result = await addCollection.deleteOne(query);
       res.send(result);
     })
 
@@ -201,7 +208,7 @@ async function run() {
 
       app.get('/addProduct', verifyToken, verifyAdmin, async (req, res) => {
         const item = req.body;
-        const result = await menuCollection.insertOne(item);
+        const result = await myCollection.insertOne(item);
         res.send(result);
       });
 
