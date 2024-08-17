@@ -53,7 +53,6 @@ async function run() {
     })
 
 
-
     const verifyToken = (req, res, next) =>{
       console.log( 'inside verify token' , req.headers.authorization);
 
@@ -247,6 +246,28 @@ async function run() {
         const result = await cursor.toArray();
         res.send(result);
     })
+
+    app.get('/admin-stats',verifyToken, async(req, res) => {
+      const users = await userCollection.estimatedDocumentCount();
+      const Products = await tagCollection.estimatedDocumentCount();
+      const orders = await addCollection.estimatedDocumentCount();
+
+
+      res.send({
+        users,
+       Products,
+       orders
+      })
+    })
+
+    // app.get('/order-stats', async(req, res) => {
+    //   const result = await userCollection.aggregate([
+
+
+    //   ]).toArray();
+
+    //   res.send(result)
+    // })
 
     // app.post('/create-payment-intent', async(req, res) =>{
     //   const { price } = req.body;
